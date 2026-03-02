@@ -1,0 +1,35 @@
+# Miscellaneous
+*.iml
+.dart_tool/
+
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will output build, apk, and eclipse signing credentials to the
+# .android directory.
+.android/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.*
+
+# Keys
+**/key.properties
+**/keystore/

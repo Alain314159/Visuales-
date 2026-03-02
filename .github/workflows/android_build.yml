@@ -1,0 +1,135 @@
+name: Android Build CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout del código
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Configurar Java
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # 3. Configurar Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+          cache: true
+
+      # 4. Obtener dependencias
+      - name: Get dependencies
+        run: flutter pub get
+
+      # 5. Analizar código
+      - name: Analyze code
+        run: flutter analyze
+
+      # 6. Ejecutar tests
+      - name: Run tests
+        run: flutter test
+
+      # 7. Build Debug APK
+      - name: Build Debug APK
+        run: flutter build apk --debug --split-per-abi
+
+      # 8. Build Release APK
+      - name: Build Release APK
+        run: flutter build apk --release --split-per-abi
+
+      # 9. Build App Bundle (Play Store)
+      - name: Build App Bundle
+        run: flutter build appbundle --release
+
+      # 10. Subir APK Debug como artifact
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: build/app/outputs/flutter-apk/app-armeabi-v7a-debug.apk
+          retention-days: 7
+
+      # 11. Subir APK Release como artifact
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+          retention-days: 30
+
+      # 12. Subir App Bundle como artifact
+      - name: Upload App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-bundle
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      # 13. Crear Release en GitHub (solo en main)
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          body: |
+            ## Cambios en esta versión
+            
+            ### Build Information
+            - **Build Number**: ${{ github.run_number }}
+            - **Commit**: ${{ github.sha }}
+            - **Fecha**: ${{ github.event.head_commit.timestamp }}
+            - **Autor**: ${{ github.actor }}
+            
+            ### Cambios
+            ${{ github.event.head_commit.message }}
+            
+            ### Descargas
+            - APK Release: [Descargar](https://github.com/${{ github.repository }}/releases/download/v${{ github.run_number }}/app-armeabi-v7a-release.apk)
+            - App Bundle: [Descargar](https://github.com/${{ github.repository }}/releases/download/v${{ github.run_number }}/app-release.aab)
+            
+            ---
+            **Visuales UCLV** - App no oficial para el servidor Visuales UCLV
+          draft: false
+          prerelease: false
+          files: |
+            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            build/app/outputs/bundle/release/app-release.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 14. Generar reporte de build
+      - name: Generate Build Report
+        run: |
+          echo "## 📱 Build Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ Build Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Number | ${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Triggered by | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Debug APK: \`build/app/outputs/flutter-apk/app-armeabi-v7a-debug.apk\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Release APK: \`build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk\`" >> $GITHUB_STEP_SUMMARY
+          echo "- App Bundle: \`build/app/outputs/bundle/release/app-release.aab\`" >> $GITHUB_STEP_SUMMARY
