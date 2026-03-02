@@ -47,6 +47,14 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
+  void _performSearch(String query) {
+    if (query.isEmpty) {
+      context.read<SearchProvider>().clearSearch();
+    } else {
+      context.read<SearchProvider>().search(query);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -47,18 +47,18 @@ class MediaItem {
   /// Crea un MediaItem desde un mapa JSON
   factory MediaItem.fromJson(Map<String, dynamic> json) {
     return MediaItem(
-      id: json['id'] as String? ?? '',
-      title: json['title'] as String? ?? 'Sin título',
+      id: (json['id'] as String?)?.trim() ?? '',
+      title: (json['title'] as String?)?.trim() ?? 'Sin título',
       type: MediaTypeExtension.fromString(json['type'] as String? ?? ''),
       description: json['description'] as String?,
       genres: json['genres'] is List
-          ? (json['genres'] as List).cast<String>()
+          ? (json['genres'] as List).whereType<String>().toList()
           : [],
       year: json['year'] is int ? json['year'] as int : null,
       quality: QualityExtension.fromString(json['quality'] as String? ?? ''),
       language: json['language'] as String?,
       size: json['size'] as String?,
-      downloadUrl: json['downloadUrl'] as String? ?? '',
+      downloadUrl: (json['downloadUrl'] as String?)?.trim() ?? '',
       coverUrl: json['coverUrl'] as String?,
       dateAdded: json['dateAdded'] != null
           ? DateTime.tryParse(json['dateAdded'] as String)

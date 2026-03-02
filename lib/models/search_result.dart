@@ -21,18 +21,18 @@ class SearchResult {
     return SearchResult(
       items: json['items'] is List
           ? (json['items'] as List)
-              .where((e) => e is Map<String, dynamic>)
-              .map((e) => MediaItem.fromJson(e as Map<String, dynamic>))
+              .whereType<Map<String, dynamic>>()
+              .map((e) => MediaItem.fromJson(e))
               .toList()
           : [],
-      query: json['query'] as String? ?? '',
+      query: (json['query'] as String?)?.trim() ?? '',
       totalResults: json['totalResults'] as int? ?? 0,
       searchDuration: Duration(
         milliseconds: json['searchDuration'] as int? ?? 0,
       ),
       filters: json['filters'] is Map<String, dynamic>
           ? (json['filters'] as Map<String, dynamic>).map(
-              (k, v) => MapEntry(k, v as int),
+              (k, v) => MapEntry(k as String, v as int),
             )
           : {},
     );

@@ -121,3 +121,7 @@ class UIHelper {
   static bool isDesktop(BuildContext context) {
     return MediaQuery.of(context).size.width >= 900;
   }
+}
+
+/// Enum para tamaño de pantalla
+enum ScreenSize { phone, tablet, desktop }

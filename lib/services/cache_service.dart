@@ -6,8 +6,23 @@ import '../config/constants.dart';
 /// Servicio de caché local
 class CacheService {
   final SharedPreferences _prefs;
+  final List<void Function()> _listeners = [];
 
   CacheService(this._prefs);
+
+  void addListener(void Function() listener) {
+    _listeners.add(listener);
+  }
+
+  void removeListener(void Function() listener) {
+    _listeners.remove(listener);
+  }
+
+  void _notifyListeners() {
+    for (final listener in _listeners) {
+      listener();
+    }
+  }
 
   /// Guarda la lista de elementos en caché
   Future<void> saveMediaList(List<MediaItem> items) async {
@@ -15,6 +30,7 @@ class CacheService {
     final jsonString = jsonEncode(jsonList);
     await _prefs.setString(Constants.cacheKeyName, jsonString);
     await _prefs.setInt(Constants.cacheKeyTimestamp, DateTime.now().millisecondsSinceEpoch);
+    _notifyListeners();
   }
 
   /// Obtiene la lista de elementos desde caché
@@ -67,6 +83,7 @@ class CacheService {
     await _prefs.remove(Constants.cacheKeyName);
     await _prefs.remove(Constants.cacheKeyTimestamp);
     await _prefs.remove(Constants.cacheKeyHash);
+    _notifyListeners();
   }
 
   /// Guarda el historial de búsquedas
@@ -88,6 +105,7 @@ class CacheService {
       favorites.remove(id);
     }
     await _prefs.setStringList('favorites', favorites);
+    _notifyListeners();
   }
 
   /// Obtiene los IDs de elementos favoritos

@@ -59,6 +59,10 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
             .toList();
         _showSuggestions = value.isNotEmpty && _filteredSuggestions.isNotEmpty;
       });
+    } else {
+      setState(() {
+        _showSuggestions = false;
+      });
     }
   }
 
@@ -113,7 +117,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   ),
                 ),
               ),
-              if (widget.controller?.text.isNotEmpty ?? false)
+              if (widget.controller != null && widget.controller!.text.isNotEmpty)
                 IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {

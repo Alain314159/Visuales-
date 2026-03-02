@@ -149,7 +149,7 @@ class DownloadService {
         url,
         filePath,
         onReceiveProgress: (received, total) {
-          if (total != -1) {
+          if (total != -1 && total > 0) {
             _updateTask(
               task.id,
               downloadedBytes: received,
@@ -173,7 +173,7 @@ class DownloadService {
         _updateTask(
           task.id,
           status: DownloadStatus.failed,
-          errorMessage: e.message,
+          errorMessage: e.message ?? 'Error desconocido',
           endTime: DateTime.now(),
         );
       }

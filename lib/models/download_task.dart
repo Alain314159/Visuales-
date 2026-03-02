@@ -41,7 +41,7 @@ class DownloadTask {
 
   factory DownloadTask.fromJson(Map<String, dynamic> json) {
     return DownloadTask(
-      id: json['id'] as String? ?? '',
+      id: (json['id'] as String?)?.trim() ?? '',
       media: json['media'] is Map<String, dynamic>
           ? MediaItem.fromJson(json['media'] as Map<String, dynamic>)
           : const MediaItem(
@@ -50,7 +50,7 @@ class DownloadTask {
               type: MediaType.other,
               downloadUrl: '',
             ),
-      savePath: json['savePath'] as String? ?? '',
+      savePath: (json['savePath'] as String?)?.trim() ?? '',
       totalBytes: json['totalBytes'] as int? ?? 0,
       downloadedBytes: json['downloadedBytes'] as int? ?? 0,
       status: json['status'] != null

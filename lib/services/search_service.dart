@@ -224,6 +224,7 @@ class SearchService {
 
     // Evitar división por cero
     if (normalizedQuery.isEmpty) return false;
+    if (normalizedText.isEmpty) return false;
 
     // Verificar si los caracteres de la query aparecen en orden en el texto
     int queryIndex = 0;

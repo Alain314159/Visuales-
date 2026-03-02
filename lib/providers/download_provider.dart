@@ -54,6 +54,12 @@ class DownloadProvider extends ChangeNotifier {
         throw Exception('Permisos de almacenamiento denegados');
       }
 
+      // Verificar si ya está en descarga
+      if (isDownloading(item.id)) {
+        debugPrint('El elemento ya está en descarga: ${item.title}');
+        return getTask(item.id);
+      }
+
       return await _downloadService.startDownload(item);
     } catch (e) {
       debugPrint('Error al iniciar descarga: $e');

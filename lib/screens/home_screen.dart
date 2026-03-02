@@ -23,7 +23,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   MediaType? _selectedCategory;
-  bool _searchProviderUpdated = false;
 
   @override
   void initState() {
@@ -186,11 +185,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Consumer2<MediaProvider, SearchProvider>(
       builder: (context, mediaProvider, searchProvider, child) {
-        // Update search provider when media changes - usando addPostFrameCallback para evitar rebuild infinito
-        if (!mediaProvider.isLoading && mediaProvider.mediaItems.isNotEmpty && !_searchProviderUpdated) {
+        // Update search provider when media changes
+        if (!mediaProvider.isLoading && mediaProvider.mediaItems.isNotEmpty) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             searchProvider.updateItems(mediaProvider.mediaItems);
-            _searchProviderUpdated = true;
           });
         }
 
@@ -208,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
 
-        List items = mediaProvider.mediaItems;
+        List<MediaItem> items = mediaProvider.mediaItems;
         if (_selectedCategory != null) {
           items = mediaProvider.getByType(_selectedCategory!);
         }

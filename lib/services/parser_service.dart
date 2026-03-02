@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '../models/media_item.dart';
 import '../models/enums.dart';
 import '../config/constants.dart';
@@ -28,20 +29,24 @@ class ParserService {
   MediaItem? _parseLine(String line) {
     // Formato esperado: [CATEGORIA] Título | Calidad | Idioma | Tamaño | URL
     // O formatos variados según el servidor
-    
+
     try {
       // Intentar parsear formato con pipe
       if (line.contains('|')) {
         return _parsePipeFormat(line);
       }
-      
+
       // Intentar parsear formato de ruta
       if (line.contains('/')) {
         return _parsePathFormat(line);
       }
+
+      // Formato simple: solo título (solo si no está vacío)
+      if (line.trim().isNotEmpty) {
+        return _parseSimpleFormat(line);
+      }
       
-      // Formato simple: solo título
-      return _parseSimpleFormat(line);
+      return null;
     } catch (e) {
       return null;
     }
