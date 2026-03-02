@@ -53,6 +53,7 @@ class VisualesApp extends StatelessWidget {
         // Search Service
         ProxyProvider2<ApiService, CacheService, SearchService>(
           update: (_, apiService, cacheService, __) {
+            // SearchService se actualiza con los items reales desde MediaProvider
             return SearchService(const []);
           },
         ),

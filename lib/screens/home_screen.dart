@@ -23,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   MediaType? _selectedCategory;
+  bool _searchProviderUpdated = false;
 
   @override
   void initState() {
@@ -186,11 +187,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Consumer2<MediaProvider, SearchProvider>(
       builder: (context, mediaProvider, searchProvider, child) {
         // Update search provider when media changes - usando addPostFrameCallback para evitar rebuild infinito
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mediaProvider.mediaItems.isNotEmpty) {
+        if (!mediaProvider.isLoading && mediaProvider.mediaItems.isNotEmpty && !_searchProviderUpdated) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
             searchProvider.updateItems(mediaProvider.mediaItems);
-          }
-        });
+            _searchProviderUpdated = true;
+          });
+        }
 
         if (mediaProvider.isLoading && !mediaProvider.hasLoadedOnce) {
           return const LoadingWidget(message: 'Cargando contenido...');
@@ -268,6 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     (context, index) {
                       final item = items[index];
                       return MediaCard(
+                        key: ValueKey(item.id),
                         item: item,
                         onTap: () {
                           Navigator.pushNamed(

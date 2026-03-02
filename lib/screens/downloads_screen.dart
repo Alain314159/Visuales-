@@ -56,6 +56,7 @@ class DownloadsScreen extends StatelessWidget {
                 _buildSectionHeader(theme, 'En progreso (${activeTasks.length})'),
                 ...activeTasks.map((task) {
                   return DownloadProgress(
+                    key: ValueKey(task.id),
                     task: task,
                     onPause: () {
                       downloadProvider.pauseDownload(task.id);
@@ -75,6 +76,7 @@ class DownloadsScreen extends StatelessWidget {
                 _buildSectionHeader(theme, 'Fallidas (${failedTasks.length})'),
                 ...failedTasks.map((task) {
                   return DownloadProgress(
+                    key: ValueKey(task.id),
                     task: task,
                     showActions: true,
                     onRetry: () {
@@ -92,6 +94,7 @@ class DownloadsScreen extends StatelessWidget {
                 _buildSectionHeader(theme, 'Completadas (${completedTasks.length})'),
                 ...completedTasks.map((task) {
                   return DownloadProgress(
+                    key: ValueKey(task.id),
                     task: task,
                     showActions: false,
                   );

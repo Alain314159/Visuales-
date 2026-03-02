@@ -51,8 +51,10 @@ class MediaItem {
       title: json['title'] as String? ?? 'Sin título',
       type: MediaTypeExtension.fromString(json['type'] as String? ?? ''),
       description: json['description'] as String?,
-      genres: (json['genres'] as List<dynamic>?)?.cast<String>() ?? [],
-      year: json['year'] as int?,
+      genres: json['genres'] is List
+          ? (json['genres'] as List).cast<String>()
+          : [],
+      year: json['year'] is int ? json['year'] as int : null,
       quality: QualityExtension.fromString(json['quality'] as String? ?? ''),
       language: json['language'] as String?,
       size: json['size'] as String?,

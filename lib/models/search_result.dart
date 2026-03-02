@@ -19,17 +19,22 @@ class SearchResult {
 
   factory SearchResult.fromJson(Map<String, dynamic> json) {
     return SearchResult(
-      items: (json['items'] as List<dynamic>)
-          .map((e) => MediaItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      items: json['items'] is List
+          ? (json['items'] as List)
+              .where((e) => e is Map<String, dynamic>)
+              .map((e) => MediaItem.fromJson(e as Map<String, dynamic>))
+              .toList()
+          : [],
       query: json['query'] as String? ?? '',
       totalResults: json['totalResults'] as int? ?? 0,
       searchDuration: Duration(
         milliseconds: json['searchDuration'] as int? ?? 0,
       ),
-      filters: (json['filters'] as Map<String, dynamic>?)?.map(
-        (k, v) => MapEntry(k, v as int),
-      ) ?? {},
+      filters: json['filters'] is Map<String, dynamic>
+          ? (json['filters'] as Map<String, dynamic>).map(
+              (k, v) => MapEntry(k, v as int),
+            )
+          : {},
     );
   }
 

@@ -46,24 +46,34 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (!mounted) return;
 
-    final mediaProvider = context.read<MediaProvider>();
-    final settingsProvider = context.read<SettingsProvider>();
+    try {
+      final mediaProvider = context.read<MediaProvider>();
+      final settingsProvider = context.read<SettingsProvider>();
 
-    // Inicializar providers
-    await mediaProvider.initialize();
+      // Inicializar providers
+      await mediaProvider.initialize();
 
-    // Sincronizar si está configurado
-    if (settingsProvider.autoSyncOnStart) {
-      await mediaProvider.sync();
-    } else if (!mediaProvider.hasLoadedOnce) {
-      // Cargar desde caché si no hay sync automático
-      await mediaProvider.reload();
+      if (!mounted) return;
+
+      // Sincronizar si está configurado
+      if (settingsProvider.autoSyncOnStart) {
+        await mediaProvider.sync();
+      } else if (!mediaProvider.hasLoadedOnce) {
+        // Cargar desde caché si no hay sync automático
+        await mediaProvider.reload();
+      }
+
+      if (!mounted) return;
+
+      // Navegar al home
+      Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+    } catch (e) {
+      // Manejar error y mostrar mensaje al usuario
+      debugPrint('Error initializing app: $e');
+      if (!mounted) return;
+      // Navegar al home de todos modos para que intente manualmente
+      Navigator.of(context).pushReplacementNamed(AppRoutes.home);
     }
-
-    if (!mounted) return;
-
-    // Navegar al home
-    Navigator.of(context).pushReplacementNamed(AppRoutes.home);
   }
 
   @override

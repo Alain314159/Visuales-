@@ -98,45 +98,6 @@ class UIHelper {
     );
   }
 
-  /// Navega con animación de desvanecimiento
-  static Future<T?> fadeNavigate<T>(BuildContext context, Widget page) {
-    return Navigator.push<T>(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => page,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
-    );
-  }
-
-  /// Navega con animación de slide
-  static Future<T?> slideNavigate<T>(BuildContext context, Widget page) {
-    return Navigator.push<T>(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => page,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          final tween = Tween(begin: begin, end: end);
-          final offsetAnimation = tween.animate(animation);
-
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
-    );
-  }
-
   /// Obtiene el tamaño de pantalla
   static ScreenSize getScreenSize(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -160,21 +121,3 @@ class UIHelper {
   static bool isDesktop(BuildContext context) {
     return MediaQuery.of(context).size.width >= 900;
   }
-
-  /// Obtiene el padding seguro (notches, etc.)
-  static EdgeInsets getSafePadding(BuildContext context) {
-    return MediaQuery.of(context).padding;
-  }
-
-  /// Obtiene la altura de la barra de estado
-  static double getStatusBarHeight(BuildContext context) {
-    return MediaQuery.of(context).padding.top;
-  }
-
-  /// Obtiene la altura del teclado en pantalla
-  static double getKeyboardHeight(BuildContext context) {
-    return MediaQuery.of(context).viewInsets.bottom;
-  }
-}
-
-enum ScreenSize { phone, tablet, desktop }

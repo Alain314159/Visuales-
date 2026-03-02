@@ -247,6 +247,7 @@ class _SearchScreenState extends State<SearchScreen> {
           itemBuilder: (context, index) {
             final item = results[index];
             return MediaListTile(
+              key: ValueKey(item.id),
               item: item,
               onTap: () {
                 Navigator.pushNamed(

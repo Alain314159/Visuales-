@@ -42,14 +42,23 @@ class DownloadTask {
   factory DownloadTask.fromJson(Map<String, dynamic> json) {
     return DownloadTask(
       id: json['id'] as String? ?? '',
-      media: MediaItem.fromJson(json['media'] as Map<String, dynamic>),
+      media: json['media'] is Map<String, dynamic>
+          ? MediaItem.fromJson(json['media'] as Map<String, dynamic>)
+          : const MediaItem(
+              id: '',
+              title: 'Unknown',
+              type: MediaType.other,
+              downloadUrl: '',
+            ),
       savePath: json['savePath'] as String? ?? '',
       totalBytes: json['totalBytes'] as int? ?? 0,
       downloadedBytes: json['downloadedBytes'] as int? ?? 0,
-      status: DownloadStatus.values.firstWhere(
-        (e) => e.name == json['status'],
-        orElse: () => DownloadStatus.queued,
-      ),
+      status: json['status'] != null
+          ? DownloadStatus.values.firstWhere(
+              (e) => e.name == json['status'],
+              orElse: () => DownloadStatus.queued,
+            )
+          : DownloadStatus.queued,
       startTime: DateTime.tryParse(json['startTime'] as String) ?? DateTime.now(),
       endTime: json['endTime'] != null
           ? DateTime.tryParse(json['endTime'] as String)
