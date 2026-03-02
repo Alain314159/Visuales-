@@ -143,12 +143,22 @@ class VisualesApp extends StatelessWidget {
                     builder: (_) => SearchScreen(initialQuery: query),
                   );
                 case AppRoutes.category:
-                  final category = settings.arguments as String;
+                  final category = settings.arguments as String?;
+                  if (category == null || category.isEmpty) {
+                    return MaterialPageRoute(
+                      builder: (_) => const HomeScreen(),
+                    );
+                  }
                   return MaterialPageRoute(
                     builder: (_) => CategoryScreen(categoryName: category),
                   );
                 case AppRoutes.detail:
-                  final mediaId = settings.arguments as String;
+                  final mediaId = settings.arguments as String?;
+                  if (mediaId == null || mediaId.isEmpty) {
+                    return MaterialPageRoute(
+                      builder: (_) => const HomeScreen(),
+                    );
+                  }
                   return MaterialPageRoute(
                     builder: (_) => DetailScreen(mediaId: mediaId),
                   );

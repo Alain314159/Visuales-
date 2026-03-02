@@ -56,7 +56,10 @@ class ApiService {
   Future<String> fetchListado() async {
     try {
       final response = await _dio.get('/listado.txt');
-      return response.data as String;
+      if (response.data is String) {
+        return response.data as String;
+      }
+      return response.data.toString();
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
         // Intenta con listado.html
@@ -72,7 +75,10 @@ class ApiService {
   Future<String> fetchListadoHtml() async {
     try {
       final response = await _dio.get('/listado.html');
-      return response.data as String;
+      if (response.data is String) {
+        return response.data as String;
+      }
+      return response.data.toString();
     } on DioException catch (e) {
       throw _handleError(e);
     } catch (e) {
@@ -84,7 +90,10 @@ class ApiService {
   Future<String> fetchDirectoryIndex(String path) async {
     try {
       final response = await _dio.get(path);
-      return response.data as String;
+      if (response.data is String) {
+        return response.data as String;
+      }
+      return response.data.toString();
     } on DioException catch (e) {
       throw _handleError(e);
     } catch (e) {

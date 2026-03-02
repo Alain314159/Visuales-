@@ -303,7 +303,8 @@ class ParserService {
   /// Extrae tamaño desde HTML
   String? _extractSizeFromHtml(String html, String fileName) {
     // Buscar el tamaño en la tabla de Apache
-    final pattern = RegExp(r'>(${fileName}.*?)</a>.*?(\\d+(?:\\.\\d+)?\\s*(?:GB|MB|KB))', 
+    final escapedFileName = RegExp.escape(fileName);
+    final pattern = RegExp(r'>($escapedFileName.*?)</a>.*?(\d+(?:\.\d+)?\s*(?:GB|MB|KB))',
       caseSensitive: false);
     final match = pattern.firstMatch(html);
     if (match != null) {

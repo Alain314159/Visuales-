@@ -58,15 +58,15 @@ class MediaItem {
       size: json['size'] as String?,
       downloadUrl: json['downloadUrl'] as String? ?? '',
       coverUrl: json['coverUrl'] as String?,
-      dateAdded: json['dateAdded'] != null 
-          ? DateTime.parse(json['dateAdded'] as String) 
+      dateAdded: json['dateAdded'] != null
+          ? DateTime.tryParse(json['dateAdded'] as String)
           : null,
       isFavorite: json['isFavorite'] as bool? ?? false,
       seasons: json['seasons'] as int?,
       episodes: json['episodes'] as int?,
       path: json['path'] as String?,
       lastModified: json['lastModified'] != null
-          ? DateTime.parse(json['lastModified'] as String)
+          ? DateTime.tryParse(json['lastModified'] as String)
           : null,
     );
   }

@@ -323,15 +323,17 @@ class SettingsScreen extends StatelessWidget {
             child: const Text('Cancelar'),
           ),
           TextButton(
-            onPressed: () {
-              context.read<MediaProvider>().forceSync();
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Caché eliminada'),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+            onPressed: () async {
+              await context.read<MediaProvider>().forceSync();
+              if (context.mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Caché eliminada'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
             },
             child: const Text('Eliminar'),
           ),

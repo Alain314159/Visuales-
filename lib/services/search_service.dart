@@ -4,15 +4,16 @@ import '../config/constants.dart';
 
 /// Servicio de búsqueda y filtrado
 class SearchService {
-  final List<MediaItem> _allItems;
+  late List<MediaItem> _allItems;
   final List<String> _searchHistory = [];
 
-  SearchService(this._allItems);
+  SearchService(List<MediaItem> initialItems) {
+    _allItems = List.from(initialItems);
+  }
 
   /// Actualiza la lista de elementos
   void updateItems(List<MediaItem> items) {
-    _allItems.clear();
-    _allItems.addAll(items);
+    _allItems = List.from(items);
   }
 
   /// Busca por texto con búsqueda fuzzy
@@ -220,6 +221,9 @@ class SearchService {
     // Remover espacios y caracteres especiales
     final normalizedQuery = query.replaceAll(RegExp(r'[^a-z0-9]'), '');
     final normalizedText = text.replaceAll(RegExp(r'[^a-z0-9]'), '');
+
+    // Evitar división por cero
+    if (normalizedQuery.isEmpty) return false;
 
     // Verificar si los caracteres de la query aparecen en orden en el texto
     int queryIndex = 0;

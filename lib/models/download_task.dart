@@ -50,9 +50,9 @@ class DownloadTask {
         (e) => e.name == json['status'],
         orElse: () => DownloadStatus.queued,
       ),
-      startTime: DateTime.parse(json['startTime'] as String),
-      endTime: json['endTime'] != null 
-          ? DateTime.parse(json['endTime'] as String) 
+      startTime: DateTime.tryParse(json['startTime'] as String) ?? DateTime.now(),
+      endTime: json['endTime'] != null
+          ? DateTime.tryParse(json['endTime'] as String)
           : null,
       retryCount: json['retryCount'] as int? ?? 0,
       taskId: json['taskId'] as String?,

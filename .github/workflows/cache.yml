@@ -7,7 +7,7 @@ on:
       flutter-version:
         required: false
         type: string
-        default: '3.16.0'
+        default: '3.19.0'
     outputs:
       cache-hit:
         description: "Whether the cache was hit"

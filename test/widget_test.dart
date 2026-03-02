@@ -1,30 +1,68 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:visuales_uclv/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:visuales_uclv/app.dart';
+import 'package:visuales_uclv/screens/splash_screen.dart';
+import 'package:visuales_uclv/screens/home_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('Visuales UCLV App Tests', () {
+    late SharedPreferences prefs;
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    setUp(() async {
+      prefs = await SharedPreferences.getInstance();
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    testWidgets('Splash screen loads and displays app name', (WidgetTester tester) async {
+      await tester.pumpWidget(VisualesApp(prefs: prefs));
+      
+      // Verify splash screen shows
+      expect(find.text('Visuales UCLV'), findsOneWidget);
+      expect(find.text('Tu contenido favorito'), findsOneWidget);
+      
+      // Wait for splash animation and navigation
+      await tester.pumpAndSettle();
+      
+      // Should navigate to home screen
+      expect(find.byType(HomeScreen), findsOneWidget);
+    });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    testWidgets('Home screen displays search bar', (WidgetTester tester) async {
+      await tester.pumpWidget(VisualesApp(prefs: prefs));
+      await tester.pumpAndSettle();
+      
+      // Verify search bar is present
+      expect(find.byType(TextField), findsOneWidget);
+      expect(find.text('Buscar películas, series...'), findsOneWidget);
+    });
+
+    testWidgets('Home screen displays category chips', (WidgetTester tester) async {
+      await tester.pumpWidget(VisualesApp(prefs: prefs));
+      await tester.pumpAndSettle();
+      
+      // Verify category chips are present
+      expect(find.text('Todos'), findsOneWidget);
+      expect(find.text('Películas'), findsOneWidget);
+      expect(find.text('Series'), findsOneWidget);
+      expect(find.text('Documentales'), findsOneWidget);
+      expect(find.text('Animados'), findsOneWidget);
+    });
+
+    testWidgets('Home screen has bottom navigation', (WidgetTester tester) async {
+      await tester.pumpWidget(VisualesApp(prefs: prefs));
+      await tester.pumpAndSettle();
+      
+      // Verify bottom navigation
+      expect(find.text('Inicio'), findsOneWidget);
+      expect(find.text('Descargas'), findsOneWidget);
+      expect(find.text('Ajustes'), findsOneWidget);
+    });
+
+    testWidgets('App theme is configured', (WidgetTester tester) async {
+      await tester.pumpWidget(VisualesApp(prefs: prefs));
+      
+      // Verify MaterialApp is configured
+      expect(find.byType(MaterialApp), findsOneWidget);
+    });
   });
 }
