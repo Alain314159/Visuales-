@@ -9,17 +9,17 @@ class ParserService {
   /// Sanitiza contenido HTML para prevenir XSS
   String _sanitizeHtml(String htmlContent) {
     // Remover scripts
-    final scriptRegex = RegExp(r'<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>', caseSensitive: false);
+    final scriptRegex = RegExp(r'(?i)<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>');
     var sanitized = htmlContent.replaceAllRegExp(scriptRegex, '');
-    
+
     // Remover eventos onclick, onload, etc.
-    final eventRegex = RegExp(r'\s+on\w+\s*=\s*["\'][^"\']*["\']', caseSensitive: false);
+    final eventRegex = RegExp(r'(?i)\s+on\w+\s*=\s*["\'][^"\']*["\']');
     sanitized = sanitized.replaceAllRegExp(eventRegex, '');
-    
+
     // Remover javascript: URLs
-    final jsUrlRegex = RegExp(r'javascript\s*:', caseSensitive: false);
+    final jsUrlRegex = RegExp(r'(?i)javascript\s*:');
     sanitized = sanitized.replaceAll(jsUrlRegex, '');
-    
+
     return sanitized;
   }
 
@@ -301,7 +301,7 @@ class ParserService {
 
   /// Verifica si un texto es un tamaño
   bool _isSize(String text) {
-    return RegExp(r'\d+(\.\d+)?\s*(gb|mb|kb|tb)', caseSensitive: false).hasMatch(text);
+    return RegExp(r'(?i)\d+(\.\d+)?\s*(gb|mb|kb|tb)').hasMatch(text);
   }
 
   /// Extrae calidad desde un nombre de archivo
@@ -330,11 +330,10 @@ class ParserService {
   String? _extractSizeFromHtml(String html, String fileName) {
     // Sanitizar HTML primero
     final sanitizedHtml = _sanitizeHtml(html);
-    
+
     // Buscar el tamaño en la tabla de Apache
     final escapedFileName = RegExp.escape(fileName);
-    final pattern = RegExp(r'>($escapedFileName.*?)</a>.*?(\d+(?:\.\d+)?\s*(?:GB|MB|KB))',
-      caseSensitive: false);
+    final pattern = RegExp(r'(?i)>($escapedFileName.*?)</a>.*?(\d+(?:\.\d+)?\s*(?:GB|MB|KB))');
     final match = pattern.firstMatch(sanitizedHtml);
     if (match != null) {
       return match.group(2);
@@ -351,7 +350,7 @@ class ParserService {
     title = title.replaceAll(RegExp(r'[._-]+'), ' ');
     
     // Remover tags de calidad
-    title = title.replaceAll(RegExp(r'\b(1080p|720p|480p|4k|BluRay|WEB-DL|x264|x265|AAC|AC3)\b', caseSensitive: false), '');
+    title = title.replaceAll(RegExp(r'(?i)\b(1080p|720p|480p|4k|BluRay|WEB-DL|x264|x265|AAC|AC3)\b'), '');
     
     // Limpiar espacios
     title = title.trim();
