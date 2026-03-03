@@ -85,19 +85,6 @@ class UIHelper {
     );
   }
 
-  /// Muestra un BottomSheet
-  static Future<T?> showBottomSheet<T>(
-    BuildContext context, {
-    required WidgetBuilder builder,
-    bool isScrollControlled = false,
-  }) {
-    return showModalBottomSheet<T>(
-      context: context,
-      isScrollControlled: isScrollControlled,
-      builder: builder,
-    );
-  }
-
   /// Obtiene el tamaño de pantalla
   static ScreenSize getScreenSize(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
