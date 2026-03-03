@@ -13,7 +13,7 @@ class ParserService {
     var sanitized = htmlContent.replaceAllRegExp(scriptRegex, '');
 
     // Remover eventos onclick, onload, etc.
-    final eventRegex = RegExp(r'(?i)\s+on\w+\s*=\s*["\'][^"\']*["\']');
+    final eventRegex = RegExp(r"(?i)\s+on\w+\s*=\s*[\"'][^\"']*[\"']");
     sanitized = sanitized.replaceAllRegExp(eventRegex, '');
 
     // Remover javascript: URLs
