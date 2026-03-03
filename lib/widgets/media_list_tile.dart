@@ -107,15 +107,18 @@ class MediaListTile extends StatelessWidget {
                 color: item.isFavorite ? Colors.red : null,
               ),
               onPressed: onFavorite,
+              tooltip: item.isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos',
             ),
           if (showDownloadButton)
             IconButton(
               icon: const Icon(Icons.download),
               onPressed: onDownload,
+              tooltip: 'Descargar',
             ),
         ],
       ),
       onTap: onTap,
+      semanticLabel: '${item.title}, ${item.type.value}, ${item.year ?? ''}',
     );
   }
 

@@ -79,11 +79,13 @@ class SettingsProvider extends ChangeNotifier {
     await _prefs.setBool('isDarkMode', _isDarkMode);
     await _prefs.setBool('showCoverImages', _showCoverImages);
     await _prefs.setInt('gridColumns', _gridColumns);
+    // notifyListeners() se llama una sola vez al final
     notifyListeners();
   }
 
   /// Establece el número máximo de descargas simultáneas
   Future<void> setMaxConcurrentDownloads(int value) async {
+    if (_maxConcurrentDownloads == value) return;
     _maxConcurrentDownloads = value;
     await _prefs.setInt('maxConcurrentDownloads', value);
     notifyListeners();
@@ -91,6 +93,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece la ruta de descargas
   Future<void> setDownloadPath(String value) async {
+    if (_downloadPath == value) return;
     _downloadPath = value;
     await _prefs.setString('downloadPath', value);
     notifyListeners();
@@ -98,6 +101,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece si solo descargar por WiFi
   Future<void> setWifiOnly(bool value) async {
+    if (_wifiOnly == value) return;
     _wifiOnly = value;
     await _prefs.setBool('wifiOnly', value);
     notifyListeners();
@@ -105,6 +109,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece si reintentar automáticamente
   Future<void> setAutoRetry(bool value) async {
+    if (_autoRetry == value) return;
     _autoRetry = value;
     await _prefs.setBool('autoRetry', value);
     notifyListeners();
@@ -112,6 +117,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece el número máximo de reintentos
   Future<void> setMaxRetries(int value) async {
+    if (_maxRetries == value) return;
     _maxRetries = value;
     await _prefs.setInt('maxRetries', value);
     notifyListeners();
@@ -119,6 +125,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece el límite del historial de búsquedas
   Future<void> setSearchHistoryLimit(int value) async {
+    if (_searchHistoryLimit == value) return;
     _searchHistoryLimit = value;
     await _prefs.setInt('searchHistoryLimit', value);
     notifyListeners();
@@ -126,6 +133,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece si habilitar búsqueda fuzzy
   Future<void> setEnableFuzzySearch(bool value) async {
+    if (_enableFuzzySearch == value) return;
     _enableFuzzySearch = value;
     await _prefs.setBool('enableFuzzySearch', value);
     notifyListeners();
@@ -133,6 +141,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece la duración de la caché
   Future<void> setCacheDurationHours(int value) async {
+    if (_cacheDurationHours == value) return;
     _cacheDurationHours = value;
     await _prefs.setInt('cacheDurationHours', value);
     notifyListeners();
@@ -140,6 +149,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece si sincronizar automáticamente al iniciar
   Future<void> setAutoSyncOnStart(bool value) async {
+    if (_autoSyncOnStart == value) return;
     _autoSyncOnStart = value;
     await _prefs.setBool('autoSyncOnStart', value);
     notifyListeners();
@@ -147,6 +157,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece el modo oscuro
   Future<void> setDarkMode(bool value) async {
+    if (_isDarkMode == value) return;
     _isDarkMode = value;
     await _prefs.setBool('isDarkMode', value);
     notifyListeners();
@@ -154,6 +165,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece si mostrar portadas
   Future<void> setShowCoverImages(bool value) async {
+    if (_showCoverImages == value) return;
     _showCoverImages = value;
     await _prefs.setBool('showCoverImages', value);
     notifyListeners();
@@ -161,6 +173,7 @@ class SettingsProvider extends ChangeNotifier {
 
   /// Establece el número de columnas de la cuadrícula
   Future<void> setGridColumns(int value) async {
+    if (_gridColumns == value) return;
     _gridColumns = value;
     await _prefs.setInt('gridColumns', value);
     notifyListeners();

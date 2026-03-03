@@ -188,7 +188,9 @@ class _HomeScreenState extends State<HomeScreen> {
         // Update search provider when media changes
         if (!mediaProvider.isLoading && mediaProvider.mediaItems.isNotEmpty) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            searchProvider.updateItems(mediaProvider.mediaItems);
+            if (mounted) {
+              searchProvider.updateItems(mediaProvider.mediaItems);
+            }
           });
         }
 

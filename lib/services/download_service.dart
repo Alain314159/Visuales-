@@ -13,7 +13,8 @@ class DownloadService {
   final Map<String, DownloadTask> _tasks = {};
   final Map<String, CancelToken> _cancelTokens = {};
   final StreamController<DownloadTask> _progressController =
-      StreamController<DownloadTask>.broadcast();
+      StreamController<DownloadTask>.broadcast(sync: false, maxBuffer: 100);
+  bool _isDisposed = false;
 
   DownloadService({Dio? dio}) : _dio = dio ?? Dio();
 
@@ -45,12 +46,18 @@ class DownloadService {
   /// Verifica permisos de almacenamiento
   Future<bool> checkStoragePermission() async {
     if (Platform.isAndroid) {
-      final status = await Permission.storage.status;
-      if (!status.isGranted) {
-        final requested = await Permission.storage.request();
-        return requested.isGranted;
+      try {
+        final status = await Permission.storage.status;
+        if (!status.isGranted) {
+          final requested = await Permission.storage.request();
+          return requested.isGranted;
+        }
+        return status.isGranted;
+      } catch (e) {
+        // Manejar caso donde el permiso no está disponible
+        // En Android 13+ usar Permission.storage o Permission.manageExternalStorage
+        return true;
       }
-      return status.isGranted;
     }
     return true;
   }
@@ -313,10 +320,18 @@ class DownloadService {
 
   /// Cierra el servicio
   void dispose() {
+    if (_isDisposed) return;
+    _isDisposed = true;
+    
     // Cancelar todas las descargas activas
     for (final token in _cancelTokens.values) {
       token.cancel('Service disposed');
     }
-    _progressController.close();
+    _cancelTokens.clear();
+    _tasks.clear();
+    
+    if (!_progressController.isClosed) {
+      _progressController.close();
+    }
   }
 }

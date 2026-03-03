@@ -32,9 +32,12 @@ class MediaCard extends StatelessWidget {
       margin: const EdgeInsets.all(4),
       child: InkWell(
         onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: Semantics(
+          label: '${item.title}, ${item.type.value}, ${item.quality.value}',
+          button: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             // Portada/Imagen
             AspectRatio(
               aspectRatio: aspectRatio,
@@ -191,7 +194,8 @@ class MediaCard extends StatelessWidget {
                   ),
                 ),
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );

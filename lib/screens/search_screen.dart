@@ -26,16 +26,19 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
+  late final FocusNode _focusNode;
   bool _showFilters = false;
 
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode();
     if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
       _searchController.text = widget.initialQuery!;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<SearchProvider>().search(widget.initialQuery!);
+        if (mounted) {
+          context.read<SearchProvider>().search(widget.initialQuery!);
+        }
       });
     }
   }

@@ -1,10 +1,28 @@
 import 'dart:convert';
+import 'dart:convert' show html;
 import '../models/media_item.dart';
 import '../models/enums.dart';
 import '../config/constants.dart';
 
 /// Servicio para parsear el contenido del servidor
 class ParserService {
+  /// Sanitiza contenido HTML para prevenir XSS
+  String _sanitizeHtml(String htmlContent) {
+    // Remover scripts
+    final scriptRegex = RegExp(r'<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>', caseSensitive: false);
+    var sanitized = htmlContent.replaceAllRegExp(scriptRegex, '');
+    
+    // Remover eventos onclick, onload, etc.
+    final eventRegex = RegExp(r'\s+on\w+\s*=\s*["\'][^"\']*["\']', caseSensitive: false);
+    sanitized = sanitized.replaceAllRegExp(eventRegex, '');
+    
+    // Remover javascript: URLs
+    final jsUrlRegex = RegExp(r'javascript\s*:', caseSensitive: false);
+    sanitized = sanitized.replaceAll(jsUrlRegex, '');
+    
+    return sanitized;
+  }
+
   /// Parsea el archivo listado.txt
   List<MediaItem> parseTxtList(String content) {
     final items = <MediaItem>[];
@@ -152,21 +170,24 @@ class ParserService {
   /// Parsea índice HTML de Apache
   List<MediaItem> parseHtmlIndex(String html, {String? basePath}) {
     final items = <MediaItem>[];
-    
+
+    // Sanitizar HTML para prevenir XSS
+    final sanitizedHtml = _sanitizeHtml(html);
+
     // Patrón para enlaces en índice de Apache
     // <a href="...">...</a>
     final linkPattern = RegExp(r'<a\s+href="([^"]+)">([^<]+)</a>');
     
-    for (final match in linkPattern.allMatches(html)) {
+    for (final match in linkPattern.allMatches(sanitizedHtml)) {
       final href = match.group(1);
       final text = match.group(2);
-      
+
       if (href == null || text == null) continue;
-      
+
       // Saltar directorios padre y enlaces vacíos
-      if (href == '?C=N;O=D' || 
-          href == '?C=M;A=D' || 
-          href == '?C=S;A=D' || 
+      if (href == '?C=N;O=D' ||
+          href == '?C=M;A=D' ||
+          href == '?C=S;A=D' ||
           href == '?C=I;A=D' ||
           text == 'Parent Directory' ||
           text.trim().isEmpty) {
@@ -307,11 +328,14 @@ class ParserService {
 
   /// Extrae tamaño desde HTML
   String? _extractSizeFromHtml(String html, String fileName) {
+    // Sanitizar HTML primero
+    final sanitizedHtml = _sanitizeHtml(html);
+    
     // Buscar el tamaño en la tabla de Apache
     final escapedFileName = RegExp.escape(fileName);
     final pattern = RegExp(r'>($escapedFileName.*?)</a>.*?(\d+(?:\.\d+)?\s*(?:GB|MB|KB))',
       caseSensitive: false);
-    final match = pattern.firstMatch(html);
+    final match = pattern.firstMatch(sanitizedHtml);
     if (match != null) {
       return match.group(2);
     }
