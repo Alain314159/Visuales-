@@ -59,7 +59,7 @@ jobs:
           zip -q -9 build/app/outputs/flutter-apk/app-armeabi-v7a-release-optimized.apk build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk || true
 
       - name: Upload Release APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
@@ -67,7 +67,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload App Bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-bundle
           path: build/app/outputs/bundle/release/app-release.aab
