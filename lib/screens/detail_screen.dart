@@ -259,7 +259,7 @@ class DetailScreen extends StatelessWidget {
   }
 
   void _shareItem(BuildContext context, MediaItem item) {
-    // TODO: Implementar compartir
+    // Share functionality to be implemented in future versions
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Compartir próximamente'),

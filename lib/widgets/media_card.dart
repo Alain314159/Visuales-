@@ -25,7 +25,8 @@ class MediaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDownloading = false; // TODO: Check from provider
+    // Note: isDownloading state can be monitored from DownloadProvider in future
+    final isDownloading = false;
 
     return Card(
       clipBehavior: Clip.antiAlias,
