@@ -67,7 +67,8 @@ extension StringExtensions on String {
   /// Parsea tamaño de archivo a bytes
   int? parseFileSize() {
     final normalized = toLowerCase().trim();
-    final match = RegExp(r'(\d+(?:\.\d+)?)\s*(kb|mb|gb|tb)?').firstMatch(normalized);
+    final match =
+        RegExp(r'(\d+(?:\.\d+)?)\s*(kb|mb|gb|tb)?').firstMatch(normalized);
     if (match == null) return null;
 
     final value = double.tryParse(match.group(1) ?? '0') ?? 0;

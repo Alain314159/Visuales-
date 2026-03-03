@@ -5,7 +5,8 @@ class UIHelper {
   UIHelper._();
 
   /// Muestra un SnackBar
-  static void showSnackBar(BuildContext context, String message, {Duration? duration, SnackBarBehavior? behavior}) {
+  static void showSnackBar(BuildContext context, String message,
+      {Duration? duration, SnackBarBehavior? behavior}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),

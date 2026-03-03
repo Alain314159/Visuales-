@@ -1,0 +1,111 @@
+name: Auto Changelog
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  changelog:
+    name: Generate Changelog
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get previous tag
+        id: previous_tag
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          echo "previous_tag=$PREV_TAG" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog entries
+        id: changelog
+        run: |
+          if [ -z "${{ steps.previous_tag.outputs.previous_tag }}" ]; then
+            echo "No previous tag found"
+            CHANGES=$(git log --pretty=format:"* %s (%h)" --reverse)
+          else
+            echo "Previous tag: ${{ steps.previous_tag.outputs.previous_tag }}"
+            CHANGES=$(git log --pretty=format:"* %s (%h)" --reverse ${{ steps.previous_tag.outputs.previous_tag }}..HEAD)
+          fi
+          
+          # Count changes
+          FEAT_COUNT=$(echo "$CHANGES" | grep -c "feat" || echo "0")
+          FIX_COUNT=$(echo "$CHANGES" | grep -c "fix" || echo "0")
+          CHORE_COUNT=$(echo "$CHANGES" | grep -c "chore" || echo "0")
+          OTHER_COUNT=$(echo "$CHANGES" | grep -cvE "feat|fix|chore" || echo "0")
+          
+          echo "feat_count=$FEAT_COUNT" >> $GITHUB_OUTPUT
+          echo "fix_count=$FIX_COUNT" >> $GITHUB_OUTPUT
+          echo "chore_count=$CHORE_COUNT" >> $GITHUB_OUTPUT
+          echo "other_count=$OTHER_COUNT" >> $GITHUB_OUTPUT
+          echo "changes=$CHANGES" >> $GITHUB_OUTPUT
+
+      - name: Update CHANGELOG.md
+        run: |
+          # Get current date
+          DATE=$(date -u +"%Y-%m-%d")
+          TAG=${GITHUB_REF#refs/tags/}
+          
+          # Create new changelog entry
+          cat > new_changelog.md << EOF
+# Changelog
+
+All notable changes to the Visuales UCLV project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [$TAG] - $DATE
+
+### Summary
+- 🎉 Features: ${{ steps.changelog.outputs.feat_count }}
+- 🐛 Bug Fixes: ${{ steps.changelog.outputs.fix_count }}
+- 🔧 Chores: ${{ steps.changelog.outputs.chore_count }}
+- 📦 Other: ${{ steps.changelog.outputs.other_count }}
+
+### Changes
+$(echo "${{ steps.changelog.outputs.changes }}")
+
+---
+
+EOF
+
+          # Add existing changelog (skip header)
+          if [ -f CHANGELOG.md ]; then
+            tail -n +8 CHANGELOG.md >> new_changelog.md
+            mv new_changelog.md CHANGELOG.md
+          else
+            mv new_changelog.md CHANGELOG.md
+          fi
+
+      - name: Commit and push changelog
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: update changelog for ${{ github.ref_name }}"
+          file_pattern: CHANGELOG.md
+          commit_author: "GitHub Actions <github-actions@github.com>"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            ## 🚀 Cambios en esta versión
+
+            ### Summary
+            - 🎉 Features: ${{ steps.changelog.outputs.feat_count }}
+            - 🐛 Bug Fixes: ${{ steps.changelog.outputs.fix_count }}
+            - 🔧 Chores: ${{ steps.changelog.outputs.chore_count }}
+            - 📦 Other: ${{ steps.changelog.outputs.other_count }}
+
+            ### Changes
+            ${{ steps.changelog.outputs.changes }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

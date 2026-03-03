@@ -88,7 +88,8 @@ class SettingsScreen extends StatelessWidget {
             builder: (context, settings, child) {
               return SwitchListTile(
                 title: const Text('Solo WiFi'),
-                subtitle: const Text('Descargar solo cuando esté conectado a WiFi'),
+                subtitle:
+                    const Text('Descargar solo cuando esté conectado a WiFi'),
                 value: settings.wifiOnly,
                 onChanged: (value) {
                   settings.setWifiOnly(value);
@@ -123,7 +124,8 @@ class SettingsScreen extends StatelessWidget {
                       icon: const Icon(Icons.remove),
                       onPressed: () {
                         if (settings.maxConcurrentDownloads > 1) {
-                          settings.setMaxConcurrentDownloads(settings.maxConcurrentDownloads - 1);
+                          settings.setMaxConcurrentDownloads(
+                              settings.maxConcurrentDownloads - 1);
                         }
                       },
                     ),
@@ -132,7 +134,8 @@ class SettingsScreen extends StatelessWidget {
                       icon: const Icon(Icons.add),
                       onPressed: () {
                         if (settings.maxConcurrentDownloads < 5) {
-                          settings.setMaxConcurrentDownloads(settings.maxConcurrentDownloads + 1);
+                          settings.setMaxConcurrentDownloads(
+                              settings.maxConcurrentDownloads + 1);
                         }
                       },
                     ),
@@ -202,7 +205,8 @@ class SettingsScreen extends StatelessWidget {
                       icon: const Icon(Icons.remove),
                       onPressed: () {
                         if (settings.cacheDurationHours > 1) {
-                          settings.setCacheDurationHours(settings.cacheDurationHours - 1);
+                          settings.setCacheDurationHours(
+                              settings.cacheDurationHours - 1);
                         }
                       },
                     ),
@@ -211,7 +215,8 @@ class SettingsScreen extends StatelessWidget {
                       icon: const Icon(Icons.add),
                       onPressed: () {
                         if (settings.cacheDurationHours < 72) {
-                          settings.setCacheDurationHours(settings.cacheDurationHours + 1);
+                          settings.setCacheDurationHours(
+                              settings.cacheDurationHours + 1);
                         }
                       },
                     ),
@@ -222,7 +227,8 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.delete_outline, color: Colors.red),
-            title: const Text('Limpiar caché', style: TextStyle(color: Colors.red)),
+            title: const Text('Limpiar caché',
+                style: TextStyle(color: Colors.red)),
             subtitle: const Text('Eliminar datos cacheados'),
             onTap: () {
               _showClearCacheDialog(context);
@@ -250,7 +256,8 @@ class SettingsScreen extends StatelessWidget {
               return ListTile(
                 leading: const Icon(Icons.history),
                 title: const Text('Historial de búsquedas'),
-                subtitle: Text('Máximo ${settings.searchHistoryLimit} elementos'),
+                subtitle:
+                    Text('Máximo ${settings.searchHistoryLimit} elementos'),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -258,7 +265,8 @@ class SettingsScreen extends StatelessWidget {
                       icon: const Icon(Icons.remove),
                       onPressed: () {
                         if (settings.searchHistoryLimit > 5) {
-                          settings.setSearchHistoryLimit(settings.searchHistoryLimit - 1);
+                          settings.setSearchHistoryLimit(
+                              settings.searchHistoryLimit - 1);
                         }
                       },
                     ),
@@ -267,7 +275,8 @@ class SettingsScreen extends StatelessWidget {
                       icon: const Icon(Icons.add),
                       onPressed: () {
                         if (settings.searchHistoryLimit < 50) {
-                          settings.setSearchHistoryLimit(settings.searchHistoryLimit + 1);
+                          settings.setSearchHistoryLimit(
+                              settings.searchHistoryLimit + 1);
                         }
                       },
                     ),
@@ -314,7 +323,8 @@ class SettingsScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Limpiar caché'),
-        content: const Text('¿Estás seguro de que deseas eliminar todos los datos cacheados? Se volverá a sincronizar el contenido.'),
+        content: const Text(
+            '¿Estás seguro de que deseas eliminar todos los datos cacheados? Se volverá a sincronizar el contenido.'),
         actions: [
           TextButton(
             onPressed: () {

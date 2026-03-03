@@ -107,7 +107,9 @@ class MediaListTile extends StatelessWidget {
                 color: item.isFavorite ? Colors.red : null,
               ),
               onPressed: onFavorite,
-              tooltip: item.isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos',
+              tooltip: item.isFavorite
+                  ? 'Quitar de favoritos'
+                  : 'Agregar a favoritos',
             ),
           if (showDownloadButton)
             IconButton(

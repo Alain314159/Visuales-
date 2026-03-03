@@ -14,7 +14,7 @@ class SearchProvider extends ChangeNotifier {
   String _query = '';
   bool _isSearching = false;
   List<String> _searchHistory = [];
-  
+
   // Filtros
   MediaType? _filterType;
   Quality? _filterQuality;
@@ -63,7 +63,7 @@ class SearchProvider extends ChangeNotifier {
   void updateItems(List<MediaItem> items) {
     _allItems = List.from(items);
     _searchService.updateItems(_allItems);
-    
+
     // Si hay una query, re-ejecutar búsqueda
     if (_query.isNotEmpty) {
       _performSearch();

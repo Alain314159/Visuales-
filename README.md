@@ -1,16 +1,30 @@
 # Visuales UCLV - Buscador y Gestor de Descargas
 
-App Flutter para buscar y descargar contenido del servidor [Visuales UCLV](https://visuales.uclv.cu/) de la Universidad Central "Marta Abreu" de Las Villas, Cuba.
+[![Build Status](https://github.com/tu-usuario/visuales-uclv/actions/workflows/android_build.yml/badge.svg)](https://github.com/tu-usuario/visuales-uclv/actions)
+[![Release](https://img.shields.io/github/v/release/tu-usuario/visuales-uclv)](https://github.com/tu-usuario/visuales-uclv/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+App Flutter **enterprise-grade** para buscar y descargar contenido del servidor [Visuales UCLV](https://visuales.uclv.cu/) de la Universidad Central "Marta Abreu" de Las Villas, Cuba.
 
 ## 🚀 Características
 
+### Core
 - 🔍 **Buscador avanzado** con filtros por categoría, género, año y calidad
 - 📁 **Navegación por categorías**: Películas, Series, Documentales, Animados
 - 📥 **Gestor de descargas** con cola, progreso y notificaciones
-- 💾 **Cache local** del listado de contenido
+- 💾 **Cache local con Hive** (10x más rápido que SharedPreferences)
 - 🔄 **Sincronización automática** al iniciar la app
 - 📱 **Interfaz moderna** con Material 3 y modo oscuro
 - ⚡ **Funcionamiento offline** con contenido cacheado
+
+### Enterprise Features ✨
+- 🔥 **Firebase Crashlytics** - Monitoreo de crashes en tiempo real
+- 📊 **Logging estructurado** - Debugging en producción
+- 🔄 **Retry con backoff** - Conexiones inestables (ideal para Cuba)
+- ⚙️ **Variables de entorno** - Configuración flexible por entorno
+- 🚀 **CI/CD automático** - Builds y releases automáticos con GitHub Actions
+- 📦 **Control de APK size** - Fail si > 50MB
+- 🔐 **ProGuard + Obfuscación** - Código optimizado y seguro
 
 ## 📋 Requisitos
 
@@ -21,21 +35,42 @@ App Flutter para buscar y descargar contenido del servidor [Visuales UCLV](https
 
 ## 🛠️ Instalación
 
-1. Clonar el repositorio:
+### Quick Start (Recomendado)
+
+```bash
+# Clonar y configurar
+git clone https://github.com/tu-usuario/visuales-uclv.git
+cd visuales-uclv
+./setup.sh
+
+# Ejecutar la app
+flutter run
+```
+
+### Instalación Manual
+
+1. **Clonar el repositorio**:
 ```bash
 git clone https://github.com/tu-usuario/visuales-uclv.git
 cd visuales-uclv
 ```
 
-2. Instalar dependencias:
+2. **Instalar dependencias**:
 ```bash
 flutter pub get
 ```
 
-3. Configurar permisos (Android):
-   - Los permisos ya están configurados en `android/app/src/main/AndroidManifest.xml`
+3. **Configurar variables de entorno**:
+```bash
+cp .env.example .env
+# Edita .env con tu configuración
+```
 
-4. Ejecutar la app:
+4. **Configurar Firebase** (opcional, para Crashlytics):
+   - Ver `FIREBASE_SETUP.md` para instrucciones detalladas
+   - Coloca `google-services.json` en `android/app/`
+
+5. **Ejecutar la app**:
 ```bash
 flutter run
 ```
@@ -117,14 +152,39 @@ lib/
 
 ## 📦 Dependencias Principales
 
-| Dependencia | Propósito |
-|-------------|-----------|
-| `provider` | Gestión de estado |
-| `dio` | Cliente HTTP y descargas |
-| `hive` | Base de datos local |
-| `cached_network_image` | Cache de imágenes |
-| `flutter_downloader` | Descargas en background |
-| `connectivity_plus` | Detección de conexión |
+### Core
+| Dependencia | Propósito | Versión |
+|-------------|-----------|---------|
+| `provider` | Gestión de estado | ^6.1.1 |
+| `dio` | Cliente HTTP y descargas | ^5.4.0 |
+| `connectivity_plus` | Detección de conexión | ^7.0.0 |
+
+### Persistencia
+| Dependencia | Propósito | Versión |
+|-------------|-----------|---------|
+| `hive` | Base de datos local (10x más rápido) | ^2.2.3 |
+| `hive_flutter` | Hive para Flutter | ^1.1.0 |
+| `path_provider` | Rutas de archivos | ^2.1.1 |
+
+### Configuración
+| Dependencia | Propósito | Versión |
+|-------------|-----------|---------|
+| `flutter_dotenv` | Variables de entorno | ^5.1.0 |
+| `logger` | Logging estructurado | ^2.0.2+1 |
+
+### Firebase (Opcional)
+| Dependencia | Propósito | Versión |
+|-------------|-----------|---------|
+| `firebase_core` | Firebase base | ^2.24.2 |
+| `firebase_crashlytics` | Reporte de crashes | ^2.8.1 |
+| `firebase_analytics` | Analytics | ^10.8.0 |
+
+### Utilidades
+| Dependencia | Propósito | Versión |
+|-------------|-----------|---------|
+| `url_launcher` | Abrir URLs | ^6.2.1 |
+| `permission_handler` | Permisos en runtime | ^11.1.0 |
+| `cupertino_icons` | Íconos | ^1.0.6 |
 
 ## 🔧 Configuración de Descargas
 
@@ -176,6 +236,35 @@ flutter build appbundle --release
 4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
 5. Abre un Pull Request
 
+### Convención de Commits
+
+Este proyecto usa [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` Nueva funcionalidad
+- `fix:` Corrección de bug
+- `docs:` Cambios en documentación
+- `style:` Formato, faltantes, etc.
+- `refactor:` Refactorización de código
+- `test:` Agregar tests
+- `chore:` Tareas de mantenimiento
+
+### CI/CD
+
+El proyecto usa GitHub Actions para CI/CD:
+
+- **Push a main**: Build automático, tests, y release
+- **Pull requests**: Build y tests
+- **Tags**: Changelog automático y release
+
+Ver `.github/workflows/` para más detalles.
+
+## 📚 Documentación Adicional
+
+- `IMPLEMENTATION_GUIDE.md` - Guía de implementación de mejoras enterprise
+- `FIREBASE_SETUP.md` - Configuración de Firebase Crashlytics
+- `CHANGELOG.md` - Historial de cambios
+- `QUICKSTART.md` - Inicio rápido
+
 ## 📄 Licencia
 
 Este proyecto está bajo la licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
@@ -190,4 +279,4 @@ Para reportar bugs o sugerencias, abre un issue en el repositorio.
 
 ---
 
-Hecho con ❤️ para la comunidad estudiantil cubana
+**Hecho con ❤️ para la comunidad estudiantil cubana**

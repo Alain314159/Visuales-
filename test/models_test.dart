@@ -45,7 +45,8 @@ void main() {
     test('MediaTypeExtension fromString', () {
       expect(MediaTypeExtension.fromString('pelicula'), MediaType.movie);
       expect(MediaTypeExtension.fromString('serie'), MediaType.series);
-      expect(MediaTypeExtension.fromString('documental'), MediaType.documentary);
+      expect(
+          MediaTypeExtension.fromString('documental'), MediaType.documentary);
       expect(MediaTypeExtension.fromString('animado'), MediaType.animated);
       expect(MediaTypeExtension.fromString('curso'), MediaType.course);
       expect(MediaTypeExtension.fromString('unknown'), MediaType.other);
@@ -102,7 +103,7 @@ Movie 2023 | 1080p | Spanish | 2GB
       final parser = ParserService();
       final content = 'Test Movie | 1080p | English | 1.5GB';
       final result = parser.parseTxtList(content);
-      
+
       expect(result.length, 1);
       expect(result.first.title, contains('Test Movie'));
       expect(result.first.quality, Quality.hd1080);
@@ -133,10 +134,10 @@ Movie 2023 | 1080p | Spanish | 2GB
           downloadUrl: 'http://example.com/series.mp4',
         ),
       ];
-      
+
       final service = SearchService(items);
       final results = service.search('Test');
-      
+
       expect(results.length, 2);
     });
 
@@ -155,11 +156,11 @@ Movie 2023 | 1080p | Spanish | 2GB
           downloadUrl: 'http://example.com/series1.mp4',
         ),
       ];
-      
+
       final service = SearchService(items);
       final movies = service.filterByType(MediaType.movie);
       final series = service.filterByType(MediaType.series);
-      
+
       expect(movies.length, 1);
       expect(series.length, 1);
       expect(movies.first.type, MediaType.movie);
@@ -211,17 +212,19 @@ Movie 2023 | 1080p | Spanish | 2GB
     });
 
     test('DownloadTask format bytes', () {
-      expect(DownloadTask(
-        id: '1',
-        media: const MediaItem(
-          id: '1',
-          title: 'Test',
-          type: MediaType.movie,
-          downloadUrl: 'http://example.com/file.mp4',
-        ),
-        savePath: '/downloads',
-        startTime: DateTime.now(),
-      ).downloadedFormatted, '0 B');
+      expect(
+          DownloadTask(
+            id: '1',
+            media: const MediaItem(
+              id: '1',
+              title: 'Test',
+              type: MediaType.movie,
+              downloadUrl: 'http://example.com/file.mp4',
+            ),
+            savePath: '/downloads',
+            startTime: DateTime.now(),
+          ).downloadedFormatted,
+          '0 B');
     });
   });
 }

@@ -116,8 +116,8 @@ class SearchService {
     // Filtrar por género
     if (genre != null && genre.isNotEmpty) {
       results = results
-          .where((item) => item.genres
-              .any((g) => g.toLowerCase() == genre.toLowerCase()))
+          .where((item) =>
+              item.genres.any((g) => g.toLowerCase() == genre.toLowerCase()))
           .toList();
     }
 
@@ -228,7 +228,9 @@ class SearchService {
 
     // Verificar si los caracteres de la query aparecen en orden en el texto
     int queryIndex = 0;
-    for (int i = 0; i < normalizedText.length && queryIndex < normalizedQuery.length; i++) {
+    for (int i = 0;
+        i < normalizedText.length && queryIndex < normalizedQuery.length;
+        i++) {
       if (normalizedText[i] == normalizedQuery[queryIndex]) {
         queryIndex++;
       }

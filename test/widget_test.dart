@@ -13,16 +13,17 @@ void main() {
       prefs = await SharedPreferences.getInstance();
     });
 
-    testWidgets('Splash screen loads and displays app name', (WidgetTester tester) async {
+    testWidgets('Splash screen loads and displays app name',
+        (WidgetTester tester) async {
       await tester.pumpWidget(VisualesApp(prefs: prefs));
-      
+
       // Verify splash screen shows
       expect(find.text('Visuales UCLV'), findsOneWidget);
       expect(find.text('Tu contenido favorito'), findsOneWidget);
-      
+
       // Wait for splash animation and navigation
       await tester.pumpAndSettle();
-      
+
       // Should navigate to home screen
       expect(find.byType(HomeScreen), findsOneWidget);
     });
@@ -30,16 +31,17 @@ void main() {
     testWidgets('Home screen displays search bar', (WidgetTester tester) async {
       await tester.pumpWidget(VisualesApp(prefs: prefs));
       await tester.pumpAndSettle();
-      
+
       // Verify search bar is present
       expect(find.byType(TextField), findsOneWidget);
       expect(find.text('Buscar películas, series...'), findsOneWidget);
     });
 
-    testWidgets('Home screen displays category chips', (WidgetTester tester) async {
+    testWidgets('Home screen displays category chips',
+        (WidgetTester tester) async {
       await tester.pumpWidget(VisualesApp(prefs: prefs));
       await tester.pumpAndSettle();
-      
+
       // Verify category chips are present
       expect(find.text('Todos'), findsOneWidget);
       expect(find.text('Películas'), findsOneWidget);
@@ -48,10 +50,11 @@ void main() {
       expect(find.text('Animados'), findsOneWidget);
     });
 
-    testWidgets('Home screen has bottom navigation', (WidgetTester tester) async {
+    testWidgets('Home screen has bottom navigation',
+        (WidgetTester tester) async {
       await tester.pumpWidget(VisualesApp(prefs: prefs));
       await tester.pumpAndSettle();
-      
+
       // Verify bottom navigation
       expect(find.text('Inicio'), findsOneWidget);
       expect(find.text('Descargas'), findsOneWidget);
@@ -60,7 +63,7 @@ void main() {
 
     testWidgets('App theme is configured', (WidgetTester tester) async {
       await tester.pumpWidget(VisualesApp(prefs: prefs));
-      
+
       // Verify MaterialApp is configured
       expect(find.byType(MaterialApp), findsOneWidget);
     });

@@ -139,7 +139,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Tipo',
                     border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   items: [
                     const DropdownMenuItem(value: null, child: Text('Todos')),
@@ -163,7 +164,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Calidad',
                     border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   items: [
                     const DropdownMenuItem(value: null, child: Text('Todas')),
@@ -191,7 +193,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Año',
                     border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   items: [
                     const DropdownMenuItem(value: null, child: Text('Todos')),

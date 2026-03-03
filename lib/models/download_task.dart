@@ -3,12 +3,12 @@ import 'media_item.dart';
 
 /// Estado de una tarea de descarga
 enum DownloadStatus {
-  queued,      // En cola
+  queued, // En cola
   downloading, // Descargando
-  paused,      // Pausada
-  completed,   // Completada
-  failed,      // Fallida
-  cancelled,   // Cancelada
+  paused, // Pausada
+  completed, // Completada
+  failed, // Fallida
+  cancelled, // Cancelada
 }
 
 /// Modelo para tareas de descarga
@@ -59,7 +59,8 @@ class DownloadTask {
               orElse: () => DownloadStatus.queued,
             )
           : DownloadStatus.queued,
-      startTime: DateTime.tryParse(json['startTime'] as String) ?? DateTime.now(),
+      startTime:
+          DateTime.tryParse(json['startTime'] as String) ?? DateTime.now(),
       endTime: json['endTime'] != null
           ? DateTime.tryParse(json['endTime'] as String)
           : null,

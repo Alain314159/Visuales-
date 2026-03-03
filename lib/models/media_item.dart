@@ -15,11 +15,11 @@ class MediaItem {
   final String? coverUrl;
   final DateTime? dateAdded;
   final bool isFavorite;
-  
+
   // Para series
   final int? seasons;
   final int? episodes;
-  
+
   // Metadata adicional
   final String? path;
   final DateTime? lastModified;

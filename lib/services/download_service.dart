@@ -69,7 +69,7 @@ class DownloadService {
   /// Obtiene la ruta de descargas
   Future<String> getDownloadPath() async {
     Directory? directory;
-    
+
     if (Platform.isAndroid) {
       directory = await getExternalStorageDirectory();
       if (directory != null) {
@@ -81,7 +81,7 @@ class DownloadService {
         return path;
       }
     }
-    
+
     directory = await getDownloadsDirectory();
     if (directory != null) {
       final path = '${directory.path}/Visuales';
@@ -91,7 +91,7 @@ class DownloadService {
       }
       return path;
     }
-    
+
     return Constants.defaultDownloadPath;
   }
 
@@ -102,7 +102,7 @@ class DownloadService {
   }) async {
     final path = savePath ?? await getDownloadPath();
     final taskId = item.id;
-    
+
     // Verificar si ya existe una descarga
     if (_tasks.containsKey(taskId)) {
       final existingTask = _tasks[taskId]!;
@@ -227,7 +227,7 @@ class DownloadService {
   /// Pausa una descarga
   void pauseDownload(String id) {
     if (!_tasks.containsKey(id)) return;
-    
+
     final task = _tasks[id]!;
     if (task.status != DownloadStatus.downloading) return;
 
@@ -292,8 +292,9 @@ class DownloadService {
 
   /// Limpia tareas completadas
   void clearCompleted() {
-    final completedIds =
-        _tasks.values.where((t) => t.status == DownloadStatus.completed).map((t) => t.id);
+    final completedIds = _tasks.values
+        .where((t) => t.status == DownloadStatus.completed)
+        .map((t) => t.id);
     for (final id in completedIds) {
       _tasks.remove(id);
       _cancelTokens.remove(id);
@@ -326,14 +327,14 @@ class DownloadService {
   void dispose() {
     if (_isDisposed) return;
     _isDisposed = true;
-    
+
     // Cancelar todas las descargas activas
     for (final token in _cancelTokens.values) {
       token.cancel('Service disposed');
     }
     _cancelTokens.clear();
     _tasks.clear();
-    
+
     if (!_progressController.isClosed) {
       _progressController.close();
     }

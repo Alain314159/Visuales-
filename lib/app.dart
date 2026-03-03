@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logger/logger.dart';
 import 'services/api_service.dart';
 import 'services/parser_service.dart';
 import 'services/search_service.dart';
@@ -17,20 +17,26 @@ import 'screens/splash_screen.dart';
 
 /// Main Application
 class VisualesApp extends StatelessWidget {
-  final SharedPreferences prefs;
+  final CacheService cacheService;
+  final Logger logger;
 
   const VisualesApp({
     super.key,
-    required this.prefs,
+    required this.cacheService,
+    required this.logger,
   });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        // Logger Provider
+        Provider<Logger>.value(value: logger),
+        // Cache Service Provider
+        Provider<CacheService>.value(value: cacheService),
         // Settings Provider (first, needed by others)
         ChangeNotifierProvider(
-          create: (_) => SettingsProvider(prefs: prefs),
+          create: (_) => SettingsProvider(cacheService: cacheService),
         ),
         // API Service - singleton for connection pooling
         Provider(
@@ -39,10 +45,6 @@ class VisualesApp extends StatelessWidget {
         // Parser Service - lazy loaded
         Provider(
           create: (_) => ParserService(),
-        ),
-        // Cache Service - memory efficient
-        Provider(
-          create: (_) => CacheService(prefs),
         ),
         // Search Service
         ProxyProvider2<ApiService, CacheService, SearchService>(
@@ -82,7 +84,8 @@ class VisualesApp extends StatelessWidget {
           },
         ),
         // Search Provider
-        ChangeNotifierProxyProvider2<SearchService, CacheService, SearchProvider>(
+        ChangeNotifierProxyProvider2<SearchService, CacheService,
+            SearchProvider>(
           create: (context) => SearchProvider(
             searchService: context.read<SearchService>(),
             cacheService: context.read<CacheService>(),
@@ -120,9 +123,8 @@ class VisualesApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,
-            themeMode: settingsProvider.isDarkMode
-                ? ThemeMode.dark
-                : ThemeMode.light,
+            themeMode:
+                settingsProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
             initialRoute: AppRoutes.splash,
             onGenerateRoute: (settings) {
               switch (settings.name) {

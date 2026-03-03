@@ -1,21 +1,21 @@
 /// Tipo de contenido multimedia
 enum MediaType {
-  movie,      // Película
-  series,     // Serie
+  movie, // Película
+  series, // Serie
   documentary, // Documental
-  animated,   // Animado/Anime
-  course,     // Curso
-  other,      // Otro
+  animated, // Animado/Anime
+  course, // Curso
+  other, // Otro
 }
 
 /// Calidad del video
 enum Quality {
-  hd4k,       // 4K
-  hd1080,     // 1080p
-  hd720,      // 720p
-  sd480,      // 480p
-  sd360,      // 360p
-  unknown,    // Desconocida
+  hd4k, // 4K
+  hd1080, // 1080p
+  hd720, // 720p
+  sd480, // 480p
+  sd360, // 360p
+  unknown, // Desconocida
 }
 
 /// Estado de un elemento en la biblioteca

@@ -56,7 +56,8 @@ class DetailScreen extends StatelessWidget {
                       child: Icon(
                         _getIconForType(item.type),
                         size: 120,
-                        color: theme.colorScheme.onPrimaryContainer.withOpacity(0.3),
+                        color: theme.colorScheme.onPrimaryContainer
+                            .withOpacity(0.3),
                       ),
                     ),
                   ),
@@ -100,7 +101,8 @@ class DetailScreen extends StatelessWidget {
                         children: [
                           if (item.year != null)
                             Chip(
-                              avatar: const Icon(Icons.calendar_today, size: 16),
+                              avatar:
+                                  const Icon(Icons.calendar_today, size: 16),
                               label: Text('${item.year}'),
                             ),
                           if (item.quality != Quality.unknown)
@@ -140,13 +142,15 @@ class DetailScreen extends StatelessWidget {
                         Row(
                           children: [
                             if (item.seasons != null) ...[
-                              Icon(Icons.tv, size: 20, color: theme.colorScheme.primary),
+                              Icon(Icons.tv,
+                                  size: 20, color: theme.colorScheme.primary),
                               const SizedBox(width: 8),
                               Text('${item.seasons} temporadas'),
                             ],
                             if (item.episodes != null) ...[
                               const SizedBox(width: 16),
-                              Icon(Icons.playlist_play, size: 20, color: theme.colorScheme.primary),
+                              Icon(Icons.playlist_play,
+                                  size: 20, color: theme.colorScheme.primary),
                               const SizedBox(width: 8),
                               Text('${item.episodes} episodios'),
                             ],
@@ -154,7 +158,8 @@ class DetailScreen extends StatelessWidget {
                         ),
                       ],
                       // Descripción
-                      if (item.description != null && item.description!.isNotEmpty) ...[
+                      if (item.description != null &&
+                          item.description!.isNotEmpty) ...[
                         const SizedBox(height: 24),
                         Text(
                           'Sinopsis',
@@ -175,7 +180,9 @@ class DetailScreen extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                context.read<DownloadProvider>().startDownload(item);
+                                context
+                                    .read<DownloadProvider>()
+                                    .startDownload(item);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Descarga iniciada'),
@@ -186,7 +193,8 @@ class DetailScreen extends StatelessWidget {
                               icon: const Icon(Icons.download),
                               label: const Text('Descargar'),
                               style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),

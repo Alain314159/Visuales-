@@ -1,20 +1,25 @@
 import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:logger/logger.dart';
 import '../config/constants.dart';
 
-/// HTTP Service with connection pooling and memory optimization
+/// HTTP Service con connection pooling, retry con exponential backoff y logging
 class ApiService {
   static final ApiService _instance = ApiService._internal();
-  
+
   final Dio _dio;
   final Connectivity _connectivity;
+  final Logger _logger;
 
-  factory ApiService({Dio? dio, Connectivity? connectivity}) {
+  factory ApiService({Dio? dio, Connectivity? connectivity, Logger? logger}) {
     return _instance;
   }
 
-  ApiService._internal({Dio? dio, Connectivity? connectivity})
-      : _dio = dio ??
+  ApiService._internal({
+    Dio? dio,
+    Connectivity? connectivity,
+    Logger? logger,
+  })  : _dio = dio ??
             Dio(BaseOptions(
               baseUrl: Constants.baseUrl,
               connectTimeout: Constants.connectionTimeout,
@@ -25,15 +30,17 @@ class ApiService {
                 'User-Agent': 'VisualesUCLV/1.0',
               },
             )),
-        _connectivity = connectivity ?? Connectivity();
+        _connectivity = connectivity ?? Connectivity(),
+        _logger = logger ?? Logger();
 
   /// Verifica si hay conexión a internet
   Future<bool> isConnected() async {
     try {
       final connectivityResult = await _connectivity.checkConnectivity();
-      return connectivityResult.any((result) => 
-          result != ConnectivityResult.none);
+      return connectivityResult
+          .any((result) => result != ConnectivityResult.none);
     } catch (e) {
+      _logger.e('Error al verificar conexión: $e');
       return false;
     }
   }
@@ -53,75 +60,68 @@ class ApiService {
 
   /// Escucha los cambios de conectividad
   Stream<ConnectivityResult> onConnectivityChanged() {
-    return _connectivity.onConnectivityChanged
-        .map((results) => results.isEmpty ? ConnectivityResult.none : results.first);
+    return _connectivity.onConnectivityChanged.map(
+        (results) => results.isEmpty ? ConnectivityResult.none : results.first);
   }
 
-  /// Obtiene el listado principal (TXT)
+  /// Obtiene el listado principal (TXT) con retry
   Future<String> fetchListado() async {
-    try {
-      final response = await _dio.get('/listado.txt');
-      if (response.data is String) {
-        return response.data as String;
-      }
-      return response.data.toString();
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        // Intenta con listado.html
-        return fetchListadoHtml();
-      }
-      throw _handleError(e);
-    } catch (e) {
-      throw Exception('Error al obtener el listado: $e');
-    }
+    return _executeWithRetry(
+      () async {
+        final response = await _dio.get('/listado.txt');
+        if (response.data is String) {
+          return response.data as String;
+        }
+        return response.data.toString();
+      },
+      operationName: 'fetchListado',
+      fallback: fetchListadoHtml,
+    );
   }
 
-  /// Obtiene el listado principal (HTML)
+  /// Obtiene el listado principal (HTML) con retry
   Future<String> fetchListadoHtml() async {
-    try {
-      final response = await _dio.get('/listado.html');
-      if (response.data is String) {
-        return response.data as String;
-      }
-      return response.data.toString();
-    } on DioException catch (e) {
-      throw _handleError(e);
-    } catch (e) {
-      throw Exception('Error al obtener el listado HTML: $e');
-    }
+    return _executeWithRetry(
+      () async {
+        final response = await _dio.get('/listado.html');
+        if (response.data is String) {
+          return response.data as String;
+        }
+        return response.data.toString();
+      },
+      operationName: 'fetchListadoHtml',
+    );
   }
 
-  /// Obtiene el índice de una carpeta/categoría
+  /// Obtiene el índice de una carpeta/categoría con retry
   Future<String> fetchDirectoryIndex(String path) async {
-    try {
-      final response = await _dio.get(path);
-      if (response.data is String) {
-        return response.data as String;
-      }
-      return response.data.toString();
-    } on DioException catch (e) {
-      throw _handleError(e);
-    } catch (e) {
-      throw Exception('Error al obtener el índice del directorio: $e');
-    }
+    return _executeWithRetry(
+      () async {
+        final response = await _dio.get(path);
+        if (response.data is String) {
+          return response.data as String;
+        }
+        return response.data.toString();
+      },
+      operationName: 'fetchDirectoryIndex',
+    );
   }
 
   /// Obtiene los headers de un archivo (para tamaño)
   Future<Map<String, dynamic>> getFileHeaders(String url) async {
-    try {
-      final response = await _dio.head(
-        url.contains('http') ? url : '${Constants.baseUrl}$url',
-      );
-      return {
-        'contentLength': response.headers.value('content-length'),
-        'contentType': response.headers.value('content-type'),
-        'lastModified': response.headers.value('last-modified'),
-      };
-    } on DioException catch (e) {
-      throw _handleError(e);
-    } catch (e) {
-      throw Exception('Error al obtener información del archivo: $e');
-    }
+    return _executeWithRetry(
+      () async {
+        final response = await _dio.head(
+          url.contains('http') ? url : '${Constants.baseUrl}$url',
+        );
+        return {
+          'contentLength': response.headers.value('content-length'),
+          'contentType': response.headers.value('content-type'),
+          'lastModified': response.headers.value('last-modified'),
+        };
+      },
+      operationName: 'getFileHeaders',
+    );
   }
 
   /// Descarga un archivo y devuelve el stream de bytes
@@ -144,6 +144,65 @@ class ApiService {
     } catch (e) {
       return false;
     }
+  }
+
+  /// Ejecuta una operación con retry y exponential backoff
+  ///
+  /// [operation] - La operación a ejecutar
+  /// [operationName] - Nombre de la operación para logging
+  /// [maxRetries] - Número máximo de reintentos
+  /// [fallback] - Función fallback si la operación principal falla
+  Future<T> _executeWithRetry<T>({
+    required Future<T> Function() operation,
+    required String operationName,
+    int maxRetries = 3,
+    Future<T> Function()? fallback,
+  }) async {
+    int retryCount = 0;
+    Exception? lastException;
+
+    while (retryCount < maxRetries) {
+      try {
+        _logger.d('📡 $operationName (intento ${retryCount + 1}/$maxRetries)');
+        final result = await operation();
+        if (retryCount > 0) {
+          _logger
+              .i('✅ $operationName exitoso después de $retryCount reintentos');
+        }
+        return result;
+      } on DioException catch (e) {
+        lastException = _handleError(e);
+        retryCount++;
+
+        if (retryCount < maxRetries) {
+          // Exponential backoff: 1s, 2s, 4s, 8s...
+          final delay = Duration(seconds: 1 << retryCount);
+          _logger.w(
+              '⚠️ $operationName falló, reintentando en ${delay.inSeconds}s...');
+          await Future.delayed(delay);
+        }
+      } catch (e) {
+        lastException = Exception('Error en $operationName: $e');
+        retryCount++;
+
+        if (retryCount < maxRetries) {
+          final delay = Duration(seconds: 1 << retryCount);
+          await Future.delayed(delay);
+        }
+      }
+    }
+
+    // Si hay fallback, intentarlo
+    if (fallback != null) {
+      try {
+        _logger.d('🔄 Usando fallback para $operationName');
+        return await fallback();
+      } catch (e) {
+        _logger.e('❌ Fallback también falló: $e');
+      }
+    }
+
+    throw lastException ?? Exception('Error desconocido en $operationName');
   }
 
   /// Maneja errores de Dio

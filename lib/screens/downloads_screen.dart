@@ -53,7 +53,8 @@ class DownloadsScreen extends StatelessWidget {
             children: [
               // En progreso
               if (activeTasks.isNotEmpty) ...[
-                _buildSectionHeader(theme, 'En progreso (${activeTasks.length})'),
+                _buildSectionHeader(
+                    theme, 'En progreso (${activeTasks.length})'),
                 ...activeTasks.map((task) {
                   return DownloadProgress(
                     key: ValueKey(task.id),
@@ -91,7 +92,8 @@ class DownloadsScreen extends StatelessWidget {
               // Completadas
               if (completedTasks.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                _buildSectionHeader(theme, 'Completadas (${completedTasks.length})'),
+                _buildSectionHeader(
+                    theme, 'Completadas (${completedTasks.length})'),
                 ...completedTasks.map((task) {
                   return DownloadProgress(
                     key: ValueKey(task.id),

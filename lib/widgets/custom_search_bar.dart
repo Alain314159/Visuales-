@@ -110,14 +110,16 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   decoration: InputDecoration(
                     hintText: widget.hintText ?? 'Buscar...',
                     hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+                      color:
+                          theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
                     ),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
               ),
-              if (widget.controller != null && widget.controller!.text.isNotEmpty)
+              if (widget.controller != null &&
+                  widget.controller!.text.isNotEmpty)
                 IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
