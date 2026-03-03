@@ -1,21 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visuales_uclv/app.dart';
 import 'package:visuales_uclv/screens/splash_screen.dart';
 import 'package:visuales_uclv/screens/home_screen.dart';
+import 'package:visuales_uclv/services/cache_service.dart';
+import 'package:logger/logger.dart';
 
 void main() {
   group('Visuales UCLV App Tests', () {
-    late SharedPreferences prefs;
+    late CacheService cacheService;
+    late Logger logger;
 
     setUp(() async {
-      prefs = await SharedPreferences.getInstance();
+      cacheService = CacheService();
+      await cacheService.init();
+      logger = Logger();
+    });
+
+    tearDown(() async {
+      await cacheService.close();
     });
 
     testWidgets('Splash screen loads and displays app name',
         (WidgetTester tester) async {
-      await tester.pumpWidget(VisualesApp(prefs: prefs));
+      await tester.pumpWidget(VisualesApp(
+        cacheService: cacheService,
+        logger: logger,
+      ));
 
       // Verify splash screen shows
       expect(find.text('Visuales UCLV'), findsOneWidget);
@@ -29,7 +40,10 @@ void main() {
     });
 
     testWidgets('Home screen displays search bar', (WidgetTester tester) async {
-      await tester.pumpWidget(VisualesApp(prefs: prefs));
+      await tester.pumpWidget(VisualesApp(
+        cacheService: cacheService,
+        logger: logger,
+      ));
       await tester.pumpAndSettle();
 
       // Verify search bar is present
@@ -39,7 +53,10 @@ void main() {
 
     testWidgets('Home screen displays category chips',
         (WidgetTester tester) async {
-      await tester.pumpWidget(VisualesApp(prefs: prefs));
+      await tester.pumpWidget(VisualesApp(
+        cacheService: cacheService,
+        logger: logger,
+      ));
       await tester.pumpAndSettle();
 
       // Verify category chips are present
@@ -52,7 +69,10 @@ void main() {
 
     testWidgets('Home screen has bottom navigation',
         (WidgetTester tester) async {
-      await tester.pumpWidget(VisualesApp(prefs: prefs));
+      await tester.pumpWidget(VisualesApp(
+        cacheService: cacheService,
+        logger: logger,
+      ));
       await tester.pumpAndSettle();
 
       // Verify bottom navigation
@@ -62,7 +82,10 @@ void main() {
     });
 
     testWidgets('App theme is configured', (WidgetTester tester) async {
-      await tester.pumpWidget(VisualesApp(prefs: prefs));
+      await tester.pumpWidget(VisualesApp(
+        cacheService: cacheService,
+        logger: logger,
+      ));
 
       // Verify MaterialApp is configured
       expect(find.byType(MaterialApp), findsOneWidget);
