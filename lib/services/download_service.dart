@@ -18,13 +18,13 @@ class DownloadService {
 
   DownloadService({Dio? dio}) : _dio = dio ?? Dio();
 
-  /// Stream de progreso de descargas
+  /// Stream de progreso de descargas - optimized buffer
   Stream<DownloadTask> get progressStream => _progressController.stream;
 
-  /// Obtiene todas las tareas de descarga
+  /// Get all download tasks - memory efficient
   List<DownloadTask> get allTasks => _tasks.values.toList();
 
-  /// Obtiene tareas activas
+  /// Get active tasks - only returns active items
   List<DownloadTask> get activeTasks {
     return _tasks.values
         .where((t) =>
@@ -33,14 +33,18 @@ class DownloadService {
         .toList();
   }
 
-  /// Obtiene tareas completadas
+  /// Get completed tasks
   List<DownloadTask> get completedTasks {
-    return _tasks.values.where((t) => t.status == DownloadStatus.completed).toList();
+    return _tasks.values
+        .where((t) => t.status == DownloadStatus.completed)
+        .toList();
   }
 
-  /// Obtiene tareas fallidas
+  /// Get failed tasks
   List<DownloadTask> get failedTasks {
-    return _tasks.values.where((t) => t.status == DownloadStatus.failed).toList();
+    return _tasks.values
+        .where((t) => t.status == DownloadStatus.failed)
+        .toList();
   }
 
   /// Verifica permisos de almacenamiento

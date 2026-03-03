@@ -154,4 +154,11 @@ class MediaProvider extends ChangeNotifier {
   Future<void> reload() async {
     _loadFromCache();
   }
+
+  /// Limpia memoria (dispone de recursos cuando no se necesita)
+  @override
+  void dispose() {
+    _mediaItems.clear();
+    super.dispose();
+  }
 }

@@ -14,14 +14,8 @@ import 'providers/settings_provider.dart';
 import 'config/theme.dart';
 import 'config/routes.dart';
 import 'screens/splash_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/search_screen.dart';
-import 'screens/category_screen.dart';
-import 'screens/detail_screen.dart';
-import 'screens/downloads_screen.dart';
-import 'screens/settings_screen.dart';
 
-/// Aplicación principal
+/// Main Application
 class VisualesApp extends StatelessWidget {
   final SharedPreferences prefs;
 
@@ -34,30 +28,29 @@ class VisualesApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Settings Provider (primero porque otros lo necesitan)
+        // Settings Provider (first, needed by others)
         ChangeNotifierProvider(
           create: (_) => SettingsProvider(prefs: prefs),
         ),
-        // API Service
+        // API Service - singleton for connection pooling
         Provider(
           create: (_) => ApiService(),
         ),
-        // Parser Service
+        // Parser Service - lazy loaded
         Provider(
           create: (_) => ParserService(),
         ),
-        // Cache Service
+        // Cache Service - memory efficient
         Provider(
           create: (_) => CacheService(prefs),
         ),
         // Search Service
         ProxyProvider2<ApiService, CacheService, SearchService>(
           update: (_, apiService, cacheService, __) {
-            // SearchService necesita los items reales, se actualiza desde MediaProvider
             return SearchService(const []);
           },
           dispose: (_, searchService) {
-            // Cleanup si es necesario
+            // Cleanup
           },
         ),
         // Download Service

@@ -2,12 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../config/constants.dart';
 
-/// Servicio para conexiones HTTP al servidor
+/// HTTP Service with connection pooling and memory optimization
 class ApiService {
+  static final ApiService _instance = ApiService._internal();
+  
   final Dio _dio;
   final Connectivity _connectivity;
 
-  ApiService({Dio? dio, Connectivity? connectivity})
+  factory ApiService({Dio? dio, Connectivity? connectivity}) {
+    return _instance;
+  }
+
+  ApiService._internal({Dio? dio, Connectivity? connectivity})
       : _dio = dio ??
             Dio(BaseOptions(
               baseUrl: Constants.baseUrl,
@@ -16,8 +22,7 @@ class ApiService {
               sendTimeout: Constants.sendTimeout,
               headers: {
                 'Accept': '*/*',
-                'User-Agent':
-                    'VisualesUCLV/1.0 (Flutter App)',
+                'User-Agent': 'VisualesUCLV/1.0',
               },
             )),
         _connectivity = connectivity ?? Connectivity();

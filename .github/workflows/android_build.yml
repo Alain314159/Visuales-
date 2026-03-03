@@ -47,11 +47,16 @@ jobs:
       - name: Run all tests
         run: flutter test --coverage
 
-      - name: Build Release APK
-        run: flutter build apk --release --split-per-abi --verbose
+      - name: Build Release APK (optimized)
+        run: flutter build apk --release --split-per-abi --verbose --dart-define=FLUTTER_BUILD_MODE=release
 
-      - name: Build App Bundle
-        run: flutter build appbundle --release --verbose
+      - name: Build App Bundle (optimized)
+        run: flutter build appbundle --release --verbose --dart-define=FLUTTER_BUILD_MODE=release
+
+      - name: Compress Release APK
+        run: |
+          ls -lh build/app/outputs/flutter-apk/
+          zip -q -9 build/app/outputs/flutter-apk/app-armeabi-v7a-release-optimized.apk build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk || true
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
@@ -72,6 +77,8 @@ jobs:
       - name: Generate Build Report
         if: always()
         run: |
+          APK_SIZE=$(ls -lh build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk | awk '{print $5}')
+          BUNDLE_SIZE=$(ls -lh build/app/outputs/bundle/release/app-release.aab | awk '{print $5}')
           echo "## 📱 Android Build Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
@@ -80,3 +87,5 @@ jobs:
           echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Status | ✅ Success |" >> $GITHUB_STEP_SUMMARY
+          echo "| APK Size | $APK_SIZE |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bundle Size | $BUNDLE_SIZE |" >> $GITHUB_STEP_SUMMARY
